@@ -2,6 +2,98 @@
 //clang++ -std=c++17 -isystem /opt/homebrew/include -L/opt/homebrew/lib -lgtest -lgtest_main -pthread singleton.cpp -o test
 //./test
 
+//git status
+//git add .
+//git commit -m "Second commit"
+//git push -u origin main
+
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <gtest/gtest.h>
+
+using namespace std;
+
+class StudentManager {
+private:
+    vector<string> students;
+
+    StudentManager() {}
+    StudentManager(const StudentManager&) = delete;
+    StudentManager& operator=(const StudentManager&) = delete;
+
+public:
+    static StudentManager& getInstance() {
+        static StudentManager instance;
+        return instance;
+    }
+
+    void addStudent(const string& name) {
+        students.push_back(name);
+    }
+
+    void removeStudent(const string& name) {
+        auto it = find(students.begin(), students.end(), name);
+        if (it != students.end()) {
+            students.erase(it);
+        }
+    }
+
+    vector<string> getStudents() const {
+        return students;
+    }
+
+    void clear() {
+        students.clear();
+    }
+
+    void displayStudents() const {
+        cout << "\nStudent List:\n";
+        if (students.empty()) {
+            cout << "No students in the list.\n";
+            return;
+        }
+        for (const auto& name : students) {
+            cout << "- " << name << '\n';
+        }
+    }
+};
+
+
+TEST(StudentManagerTest, AddStudents) {
+    StudentManager& manager = StudentManager::getInstance();
+    manager.clear();
+
+    manager.addStudent("Ayan");
+    manager.addStudent("joy");
+
+    vector<string> expected = {"ayan", "joy"};
+    EXPECT_EQ(manager.getStudents(), expected);
+}
+
+TEST(StudentManagerTest, RemoveStudent) {
+    StudentManager& manager = StudentManager::getInstance();
+    manager.clear();
+
+    manager.addStudent("kamal");
+    manager.addStudent("Dav");
+    manager.removeStudent("kapil");
+
+    vector<string> expected = {"Dav"};
+    EXPECT_EQ(manager.getStudents(), expected);
+}
+
+
+int main(int argc, char **argv) {
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}
+
+
+
+
 /*#include <gtest/gtest.h>
 
 // Function Definitions
